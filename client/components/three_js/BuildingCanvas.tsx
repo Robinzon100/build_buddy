@@ -34,7 +34,7 @@ const BuildingCanvas: React.FC = () => {
 
 
     useEffect(() => {
-        Camera = new PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+        Camera = new PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.01, 10);
         scene = new Scene();
         geometry = new BoxGeometry(0.2, 0.2, 0.2);
         material = new MeshNormalMaterial();
