@@ -62,6 +62,7 @@ const BuildingCanvas: React.FC = () => {
             new THREE.MeshPhongMaterial({ color: 0x999999, specular: 0x101010 })
         );
         plane.rotation.x = - Math.PI / 2;
+        
         plane.position.y = - 0.5;
         scene.add(plane);
 
