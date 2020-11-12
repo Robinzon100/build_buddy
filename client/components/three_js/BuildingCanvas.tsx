@@ -15,8 +15,6 @@ const BuildingCanvas: React.FC = () => {
 
     useEffect(() => {
 
-
-
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
         renderer = new WebGLRenderer({ antialias: true });
         scene = new Scene();
