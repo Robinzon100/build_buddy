@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react'
 import * as THREE from "three"
-const { PerspectiveCamera, Scene, BoxGeometry, MeshNormalMaterial, Mesh, WebGLRenderer } = THREE
-import { TrackballControls } from "three/examples/jsm/controls/TrackballControls"
+const { PerspectiveCamera, Scene, WebGLRenderer } = THREE
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import { TDSLoader } from "three/examples/jsm/loaders/TDSLoader"
+import { fragment } from './shaders/fragmentShader';
+import { vertex } from './shaders/vertexShader';
+const glslify = require('glslify')
+
+
 
 let camera
 let renderer
@@ -12,13 +15,26 @@ let scene
 
 
 const BuildingCanvas: React.FC = () => {
+    let time = 0
+
+    let uniforms = {
+        time: { type: "f", value: 1.0 },
+        image: { type: 't', value: new THREE.TextureLoader().load('/aa.jpg') },
+        resolution: { type: "v4", value: new THREE.Vector4() }
+    };
+    let material = new THREE.ShaderMaterial({
+        side: THREE.DoubleSide,
+        uniforms: uniforms,
+        vertexShader: vertex(),
+        fragmentShader: fragment()
+    });
+    let plane = new THREE.Mesh(new THREE.PlaneGeometry(3, 3, 3), material);
+
 
     useEffect(() => {
-
-        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera = new PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
         renderer = new WebGLRenderer({ antialias: true });
         scene = new Scene();
-
 
         init();
         animate();
@@ -26,61 +42,41 @@ const BuildingCanvas: React.FC = () => {
 
 
 
+
+
+
+
+
+
+
+
     function init() {
         let BuildingCanvasContainer = document.querySelector('#BuildingCanvas')
 
         let ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
-        let pointLight = new THREE.PointLight(0xffffff, 0.8);
-        let hemisphereLight = new THREE.HemisphereLight();
-        let directionalLight = new THREE.DirectionalLight(0xffeedd);
-        let threeDsLoader = new TDSLoader();
         controls = new OrbitControls(camera, renderer.domElement);
 
+        camera.position.y = 0;
+        camera.position.x = 6;
 
-        camera.position.z = 2;
-
-        directionalLight.position.set(0, 0, 2);
-
-        scene.add(hemisphereLight);
-        scene.add(directionalLight);
         scene.add(ambientLight);
         scene.add(camera);
-        scene.add(ambientLight);
-
-        camera.add(pointLight);
-
         scene.background = new THREE.Color(0xcccccc);
         // scene.background = new THREE.Color().setHSL(0.6, 0, 1);
 
-        camera.add(pointLight);
-        scene.add(camera);
 
-        var plane = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(40, 40),
-            new THREE.MeshPhongMaterial({ color: 0x999999, specular: 0x101010 })
-        );
-        plane.rotation.x = - Math.PI / 2;
-        
-        plane.position.y = - 0.5;
-        scene.add(plane);
+
+
+        // plane.rotation.y = Math.atan2((camera.position.x - plane.position.x), (camera.position.z - plane.position.z));
+        console.log(camera);
 
         plane.receiveShadow = true;
+        scene.add(plane);
 
 
-        threeDsLoader.load('/3d_models/Apartment_Building_01_3ds.3DS', (obj) => {
-            // obj.traverse(function (child) {
-            //     if (child.isMesh) {
-            //         child.material.specular.setScalar(0.1);
-            //     }
-            // });
-            obj.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / -2));
-            obj.applyMatrix4(new THREE.Matrix4().makeTranslation(0, -0.6, -0.64));
-            obj.scale.set(.001, .001, .001)
 
-            console.log(obj)
 
-            scene.add(obj);
-        })
+
 
 
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -92,12 +88,13 @@ const BuildingCanvas: React.FC = () => {
         controls.enableDamping = true;
         controls.dampingFactor = 0.25;
         controls.screenSpacePanning = false;
-        controls.maxPolarAngle = Math.PI / 2;
+        // controls.maxPolarAngle = Math.PI / 2;
 
     }
 
     function animate() {
-
+        time++
+        plane.rotation.y = time * 0.05
         controls.update();
         renderer.render(scene, camera);
 
