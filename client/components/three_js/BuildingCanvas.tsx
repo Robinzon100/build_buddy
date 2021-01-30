@@ -8,10 +8,10 @@ const glslify = require('glslify')
 
 
 
-let camera
-let renderer
-let controls
-let scene
+let camera;
+let renderer;
+let controls;
+let scene;
 
 
 const BuildingCanvas: React.FC = () => {
@@ -19,16 +19,20 @@ const BuildingCanvas: React.FC = () => {
 
     let uniforms = {
         time: { type: "f", value: 1.0 },
-        image: { type: 't', value: new THREE.TextureLoader().load('/aa.jpg') },
+        image: { type: 't', value: new THREE.TextureLoader().load('/logo.png') },
         resolution: { type: "v4", value: new THREE.Vector4() }
     };
     let material = new THREE.ShaderMaterial({
         side: THREE.DoubleSide,
         uniforms: uniforms,
+        clipIntersection: true,
+        transparent: true,
         vertexShader: vertex(),
         fragmentShader: fragment()
     });
-    let plane = new THREE.Mesh(new THREE.PlaneGeometry(3, 3, 3), material);
+
+
+    let plane = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), material);
 
 
     useEffect(() => {
@@ -94,7 +98,7 @@ const BuildingCanvas: React.FC = () => {
 
     function animate() {
         time++
-        plane.rotation.y = time * 0.05
+        plane.rotation.y += 0.005
         controls.update();
         renderer.render(scene, camera);
 

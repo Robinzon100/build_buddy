@@ -1,5 +1,8 @@
+import glslify from 'glslify';
+
+
 export const fragment = () =>{
-    return `
+    return glslify`
         uniform sampler2D image;
         varying vec2 vUv;
 
