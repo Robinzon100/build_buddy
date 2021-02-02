@@ -13,7 +13,7 @@ const BuildingCanvas: React.FC = () => {
 
     let uniforms = {
         time: { type: "f", value: 1.0 },
-        image: { type: 't', value: new THREE.TextureLoader().load('/video.mp4') },
+        image: { type: 't', value: new THREE.TextureLoader().load('/logo.png') },
         resolution: { type: "v4", value: new THREE.Vector4() }
     };
     let material = new THREE.ShaderMaterial({
@@ -33,7 +33,6 @@ const BuildingCanvas: React.FC = () => {
 
     function init() {
         const axesHelper = new THREE.AxesHelper(5);
-        const video = document.querySelector('video')
         const clock = new THREE.Clock()
 
         let mousePosition = {
@@ -57,17 +56,8 @@ const BuildingCanvas: React.FC = () => {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.outputEncoding = THREE.sRGBEncoding;
 
-
-        // ─── VIDEO TEXTURE ───────────────────────────────────────────────
-        const videoTexture = new THREE.VideoTexture(video) 
-        const videoMaterial = new THREE.MeshBasicMaterial({
-            map: videoTexture,
-            side: THREE.FrontSide,
-            toneMapped: true
-        })
-
         // ─── PLANE ───────────────────────────────────────────────────────
-        const cube = new THREE.Mesh(new THREE.SphereGeometry(3, 74, 74), material);
+        const cube = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1, 5, 5, 5), material);
 
 
         // ─── CONTROLS ────────────────────────────────────────────────────
@@ -106,10 +96,7 @@ const BuildingCanvas: React.FC = () => {
 
 
     return (
-        <>
-            <video muted autoPlay src="/video.mp4"></video>
-            <div id="BuildingCanvas" />
-        </>
+        <div id="BuildingCanvas" />
     )
 }
 
